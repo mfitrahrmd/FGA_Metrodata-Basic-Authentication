@@ -22,18 +22,20 @@ internal class UserService
         return generatedUsername;
     }
 
-    public static void CreateUser(string firstName, string lastName, string password)
+    public static User CreateUser(string firstName, string lastName, string password)
     {
         var newUser = new User(firstName, lastName, password);
 
         Users.Add(newUser.Username, newUser);
+
+        return newUser;
     }
 
     public static List<User> SearchUser(string name)
     {
-        var foundUsers = from user in Users where user.Value.FullName.Contains(name) select user.Value;
+        List<User> foundUsers = (from user in Users where user.Value.FullName.Contains(name) select user.Value).ToList();
 
-        return foundUsers.ToList();
+        return foundUsers;
     }
 
     public static bool UpdateUser(uint id, string newFirstName, string newLastName, string newPassword)
