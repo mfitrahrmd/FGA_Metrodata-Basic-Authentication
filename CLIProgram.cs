@@ -1,3 +1,5 @@
+using System.Text.Json.Nodes;
+
 namespace Tugas_4;
 
 public class CLIProgram
@@ -119,6 +121,35 @@ public class CLIProgram
                 Console.WriteLine(e.Message);
             }
     }
+    
+    // Display random jokes from API call
+    private static void DisplayJokes()
+    {
+        Console.Clear();
+        try
+        {
+            Console.WriteLine("Wait for it..");
+            HttpResponseMessage response = new HttpClient().GetAsync("https://official-joke-api.appspot.com/jokes/random").Result;
+
+            var body = response.Content.ReadAsStringAsync().Result;
+
+            var jsonBody = JsonNode.Parse(body);
+
+            Console.WriteLine($"[?] {jsonBody["setup"]}");
+
+            Console.WriteLine("\n↵ for punchline");
+            Console.ReadLine();
+
+            Console.WriteLine($"[✓] {jsonBody["punchline"]} XD");
+
+            Console.ReadLine();
+            Console.Clear();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Sorry cant make a joke right now");
+        }
+    }
 
     private static void LoginUser()
     {
@@ -135,7 +166,13 @@ public class CLIProgram
                 Console.Clear();
                 Console.WriteLine("[✓] Login success.");
                 Console.WriteLine($"Welcome {loggedInUser.FirstName}, hope you doing well!");
-                Console.ReadLine();
+                Thread.Sleep(1000);
+                Console.WriteLine(".\n.\n.");
+                MenuHandler(new List<(int, string, Action)>
+                {
+                    (1, "Alright!", DisplayJokes),
+                    (2, "Nope", () => { })
+                }, () => { Console.WriteLine($"[?] Hey {loggedInUser.FirstName}, do you wanna hear some jokes?"); });
                 return;
             }
             catch (Exception e)
