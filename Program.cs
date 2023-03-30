@@ -1,48 +1,43 @@
-﻿using System.Collections.ObjectModel;
-using Microsoft.VisualBasic;
-using Tugas_4;
+﻿using Tugas_4;
 
-class UserService
+internal class UserService
 {
-    private static Dictionary<string, User> _users = new Dictionary<string, User>();
+    private static readonly Dictionary<string, User> Users = new();
 
     // for storing duplicate username state
-    private static Dictionary<string, uint> _usernameSuffix = new Dictionary<string, uint>();
+    private static readonly Dictionary<string, uint> UsernameSuffix = new();
 
     public static string GenerateUsername(string firstName, string lastName)
     {
-        string GeneratedUsername = firstName[..2] + lastName[..2];
+        var generatedUsername = firstName[..2] + lastName[..2];
 
-        if (_users.ContainsKey(GeneratedUsername))
+        if (Users.ContainsKey(generatedUsername))
         {
-            _usernameSuffix[GeneratedUsername]++;
-            GeneratedUsername += _usernameSuffix[GeneratedUsername].ToString();
+            UsernameSuffix[generatedUsername]++;
+            generatedUsername += UsernameSuffix[generatedUsername].ToString();
         }
 
-        _usernameSuffix.Add(GeneratedUsername, 0);
-        return GeneratedUsername;
+        UsernameSuffix.Add(generatedUsername, 0);
+        return generatedUsername;
     }
 
     public static void CreateUser(string firstName, string lastName, string password)
     {
-        User newUser = new User(firstName, lastName, password);
+        var newUser = new User(firstName, lastName, password);
 
-        _users.Add(newUser.Username, newUser);
+        Users.Add(newUser.Username, newUser);
     }
 
     public static List<User> SearchUser(string name)
     {
-        var foundUsers = from user in _users where user.Value.FullName.Contains(name) select user.Value;
+        var foundUsers = from user in Users where user.Value.FullName.Contains(name) select user.Value;
 
         return foundUsers.ToList();
     }
-    
+
     public static bool UpdateUser(uint id, string newFirstName, string newLastName, string newPassword)
     {
-        User foundUser;
-        
-        foreach (var kv in _users)
-        {
+        foreach (var kv in Users)
             if (kv.Value.Id == id)
             {
                 kv.Value.FirstName = newFirstName;
@@ -51,21 +46,18 @@ class UserService
 
                 return true;
             }
-        }
 
         throw new Exception("user not found");
     }
 
     public static bool DeleteUser(uint id)
     {
-        foreach (var user in _users)
-        {
+        foreach (var user in Users)
             if (user.Value.Id == id)
             {
-                _users.Remove(user.Key);
+                Users.Remove(user.Key);
                 return true;
             }
-        }
 
         throw new Exception("user not found");
     }
@@ -74,14 +66,11 @@ class UserService
     {
         try
         {
-            User foundUser = _users[username];
+            var foundUser = Users[username];
 
-            if (password != foundUser.Password)
-            {
-                throw new Exception($"incorrect password.");
-            }
+            if (password != foundUser.Password) throw new Exception("incorrect password.");
         }
-        catch (KeyNotFoundException e)
+        catch (KeyNotFoundException)
         {
             throw new Exception($"username {username} does not exist.");
         }
@@ -91,27 +80,23 @@ class UserService
 
     public static void PrintAllUsers()
     {
-        foreach (var user in _users)
-        {
-            Console.WriteLine(user.Value);
-        }
+        foreach (var user in Users) Console.WriteLine(user.Value);
     }
 }
 
-class CLIProgram
+internal class CLIProgram
 {
-    public static void CreateUser()
+    private static void CreateUser()
     {
         while (true)
-        {
             try
             {
                 Console.Write("First Name : ");
-                string? firstName = Console.ReadLine();
+                var firstName = Console.ReadLine();
                 Console.Write("Last Name : ");
-                string? lastName = Console.ReadLine();
+                var lastName = Console.ReadLine();
                 Console.Write("Password : ");
-                string? password = Console.ReadLine();
+                var password = Console.ReadLine();
 
                 UserService.CreateUser(firstName, lastName, password);
                 Console.WriteLine("user successfully created");
@@ -123,25 +108,23 @@ class CLIProgram
             {
                 Console.WriteLine(e.Message);
             }
-        }
     }
 
-    public static void EditUser()
+    private static void EditUser()
     {
         while (true)
-        {
             try
             {
                 Console.Write("User Id to be edited : ");
-                string? id = Console.ReadLine();
+                var id = Console.ReadLine();
                 Console.Write("New First Name : ");
-                string? newFirstName = Console.ReadLine();
+                var newFirstName = Console.ReadLine();
                 Console.Write("New Last Name : ");
-                string? newLastName = Console.ReadLine();
+                var newLastName = Console.ReadLine();
                 Console.Write("New Password : ");
-                string? newPassword = Console.ReadLine();
+                var newPassword = Console.ReadLine();
 
-                uint userId = Convert.ToUInt32(id);
+                var userId = Convert.ToUInt32(id);
 
                 UserService.UpdateUser(userId, newFirstName, newLastName, newPassword);
 
@@ -150,7 +133,7 @@ class CLIProgram
                 Console.Clear();
                 return;
             }
-            catch (FormatException e)
+            catch (FormatException)
             {
                 Console.WriteLine("invalid id");
             }
@@ -158,20 +141,17 @@ class CLIProgram
             {
                 Console.WriteLine(e.Message);
             }
-        }
-
     }
-    
-    public static void DeleteUser()
+
+    private static void DeleteUser()
     {
         while (true)
-        {
             try
             {
                 Console.Write("User Id to be deleted : ");
-                string? id = Console.ReadLine();
+                var id = Console.ReadLine();
 
-                uint userId = Convert.ToUInt32(id);
+                var userId = Convert.ToUInt32(id);
 
                 UserService.DeleteUser(userId);
 
@@ -180,7 +160,7 @@ class CLIProgram
                 Console.Clear();
                 return;
             }
-            catch (FormatException e)
+            catch (FormatException)
             {
                 Console.WriteLine("invalid id");
             }
@@ -188,11 +168,9 @@ class CLIProgram
             {
                 Console.WriteLine(e.Message);
             }
-        }
-
     }
-    
-    public static void ShowUsers()
+
+    private static void ShowUsers()
     {
         Console.WriteLine("== SHOW USERS ==");
         UserService.PrintAllUsers();
@@ -201,13 +179,13 @@ class CLIProgram
         Console.WriteLine("1. Edit User");
         Console.WriteLine("2. Delete User");
         Console.WriteLine("3. Back");
-        
+
         try
         {
             var inputMenu = Console.ReadLine();
 
             var input = Convert.ToInt32(inputMenu);
-                
+
             switch (input)
             {
                 case 1:
@@ -223,24 +201,22 @@ class CLIProgram
                     break;
             }
         }
-        catch (Exception e)
+        catch (Exception)
         {
             Console.WriteLine("invalid menu.");
         }
-
     }
 
-    public static void SearchUser()
+    private static void SearchUser()
     {
         while (true)
-        {
             try
             {
                 Console.Write("Input Name : ");
-                string? name = Console.ReadLine();
+                var name = Console.ReadLine();
 
-                List<User> foundUsers = UserService.SearchUser(name);
-                
+                var foundUsers = UserService.SearchUser(name);
+
                 foundUsers.ForEach(Console.WriteLine);
                 Console.ReadLine();
                 Console.Clear();
@@ -250,21 +226,19 @@ class CLIProgram
             {
                 Console.WriteLine(e.Message);
             }
-        }
     }
 
-    public static void LoginUser()
+    private static void LoginUser()
     {
         while (true)
-        {
             try
             {
                 Console.Write("Username : ");
-                string? username = Console.ReadLine();
+                var username = Console.ReadLine();
                 Console.Write("Password : ");
-                string? password = Console.ReadLine();
+                var password = Console.ReadLine();
 
-                bool isLoginSuccess = UserService.LoginUser(username, password);
+                var isLoginSuccess = UserService.LoginUser(username, password);
                 if (isLoginSuccess) Console.WriteLine("login success.");
                 Console.ReadLine();
                 return;
@@ -273,14 +247,13 @@ class CLIProgram
             {
                 Console.WriteLine(e.Message);
             }
-        }
     }
-    
+
     public static void Start()
     {
         while (true)
         {
-            Console.WriteLine($"== BASIC AUTHENTICATION ==");
+            Console.WriteLine("== BASIC AUTHENTICATION ==");
             Console.WriteLine("1. Create User");
             Console.WriteLine("2. Show User");
             Console.WriteLine("3. Search User");
@@ -292,7 +265,7 @@ class CLIProgram
                 var inputMenu = Console.ReadLine();
 
                 var input = Convert.ToInt32(inputMenu);
-                
+
                 switch (input)
                 {
                     case 1:
@@ -323,7 +296,6 @@ class CLIProgram
                 Console.WriteLine("invalid menu.");
             }
         }
-
     }
 }
 

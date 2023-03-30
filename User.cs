@@ -3,13 +3,11 @@ namespace Tugas_4;
 public class User
 {
     private static uint _id = 1;
-    public uint Id;
     public string FirstName;
+    public uint Id;
     public string LastName;
     public string Password;
     public string Username;
-
-    public string FullName => $"{FirstName} {LastName}";
 
     public User(string firstName, string lastName, string password)
     {
@@ -23,6 +21,8 @@ public class User
         Password = password;
         Username = UserService.GenerateUsername(FirstName, LastName);
     }
+
+    public string FullName => $"{FirstName} {LastName}";
 
     public override string ToString()
     {
