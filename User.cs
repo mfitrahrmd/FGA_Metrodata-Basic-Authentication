@@ -9,10 +9,7 @@ public class User
     public string Password;
     public string Username;
 
-    public string FullName
-    {
-        get => $"{FirstName} {LastName}";
-    }
+    public string FullName => $"{FirstName} {LastName}";
 
     public User(string firstName, string lastName, string password)
     {
@@ -20,7 +17,7 @@ public class User
         Validation.LastNameValidation(lastName);
         Validation.PasswordValidation(password);
 
-        Id = User._id++;
+        Id = _id++;
         FirstName = firstName;
         LastName = lastName;
         Password = password;
@@ -29,12 +26,12 @@ public class User
 
     public override string ToString()
     {
-        return $"==============================\n" +
+        return "==============================\n" +
                $"Id : {Id}\n" +
                $"FirstName : {FirstName}\n" +
                $"LastName : {LastName}\n" +
                $"Username : {Username}\n" +
                $"Password : {Password}\n" +
-               $"==============================\n";
+               "==============================\n";
     }
 }
