@@ -89,16 +89,24 @@ public class CLIProgram
 
     private static void ShowUsers()
     {
-        Console.WriteLine("== SHOW USERS ==");
-        var foundUsers = UserService.ListUsers();
-        foundUsers.ForEach(Console.WriteLine);
-
-        MenuHandler(new List<(int, string, Action)>
+        try
         {
-            (1, "Edit User", EditUser),
-            (2, "Delete User", DeleteUser),
-            (3, "Back", () => { })
-        }, () => { Console.WriteLine("Action Menu"); });
+            Console.WriteLine("== SHOW USERS ==");
+            var foundUsers = UserService.ListUsers();
+            foundUsers.ForEach(Console.WriteLine);
+
+            MenuHandler(new List<(int, string, Action)>
+            {
+                (1, "Edit User", EditUser),
+                (2, "Delete User", DeleteUser),
+                (3, "Back", () => { })
+            }, () => { Console.WriteLine("Action Menu"); });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        
     }
 
     private static void SearchUser()
