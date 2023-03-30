@@ -53,7 +53,7 @@ public class CLIProgram
             }
             catch (FormatException)
             {
-                Console.WriteLine("invalid id");
+                Console.WriteLine("[!] Invalid id");
             }
             catch (Exception e)
             {
@@ -79,7 +79,7 @@ public class CLIProgram
             }
             catch (FormatException)
             {
-                Console.WriteLine("invalid id");
+                Console.WriteLine("[!] Invalid id");
             }
             catch (Exception e)
             {
@@ -155,7 +155,7 @@ public class CLIProgram
         }
         catch (Exception e)
         {
-            Console.WriteLine("Sorry cant make a joke right now");
+            Console.WriteLine("[!] Sorry cant make a joke right now");
         }
     }
 
