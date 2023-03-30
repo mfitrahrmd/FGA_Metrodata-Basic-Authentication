@@ -2,15 +2,16 @@ namespace Tugas_4;
 
 public struct Validation
 {
-    // min name
+    // min firstname length
     private const int MinFirstName = 2;
+    // min firstname length
     private const int MinLastName = 2;
     // min password length
     private const int MinPassword = 8;
 
-    private static readonly Exception PasswordInvalid = new Exception("Password must have at least 8 characters, contains uppercase, lowercase and number."); 
-    private static readonly Exception FirstNameInvalid = new Exception("Firstname must have at least 2 characters"); 
-    private static readonly Exception LastNameInvalid = new Exception("Lastname must have at least 2 characters"); 
+    private static readonly Exception PasswordInvalid = new Exception($"Password must have at least {MinPassword} characters, contains uppercase, lowercase and number."); 
+    private static readonly Exception FirstNameInvalid = new Exception($"Firstname must have at least {MinFirstName} characters"); 
+    private static readonly Exception LastNameInvalid = new Exception($"Lastname must have at least {MinLastName} characters"); 
 
     public static void PasswordValidation(string password)
     {
