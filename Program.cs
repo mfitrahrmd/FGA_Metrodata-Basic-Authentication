@@ -1,4 +1,5 @@
-﻿using Tugas_4;
+﻿using System.Diagnostics;
+using Tugas_4;
 
 internal class UserService
 {
@@ -149,9 +150,7 @@ internal class CLIProgram
             try
             {
                 Console.Write("User Id to be deleted : ");
-                var id = Console.ReadLine();
-
-                var userId = Convert.ToUInt32(id);
+                var userId = Convert.ToUInt32(Console.ReadLine());
 
                 UserService.DeleteUser(userId);
 
@@ -174,37 +173,16 @@ internal class CLIProgram
     {
         Console.WriteLine("== SHOW USERS ==");
         UserService.PrintAllUsers();
-
-        Console.WriteLine("Menu");
-        Console.WriteLine("1. Edit User");
-        Console.WriteLine("2. Delete User");
-        Console.WriteLine("3. Back");
-
-        try
+        
+        MenuHandler(new List<(int, string, Action)>
         {
-            var inputMenu = Console.ReadLine();
-
-            var input = Convert.ToInt32(inputMenu);
-
-            switch (input)
-            {
-                case 1:
-                    EditUser();
-                    break;
-                case 2:
-                    DeleteUser();
-                    break;
-                case 3:
-                    return;
-                default:
-                    Console.WriteLine("invalid menu.");
-                    break;
-            }
-        }
-        catch (Exception)
+            (1, "Edit User", EditUser),
+            (2, "Delete User", DeleteUser),
+            (3, "Back", () => { })
+        }, () =>
         {
-            Console.WriteLine("invalid menu.");
-        }
+            Console.WriteLine("Action Menu");
+        });
     }
 
     private static void SearchUser()
@@ -248,54 +226,51 @@ internal class CLIProgram
                 Console.WriteLine(e.Message);
             }
     }
-
-    public static void Start()
+    
+    // listMenu list of menu to be display & serve
+    // cb function to be execute before menu
+    public static void MenuHandler(List<(int, string, Action)> listMenu, Action cb)
     {
         while (true)
         {
-            Console.WriteLine("== BASIC AUTHENTICATION ==");
-            Console.WriteLine("1. Create User");
-            Console.WriteLine("2. Show User");
-            Console.WriteLine("3. Search User");
-            Console.WriteLine("4. Login User");
-            Console.WriteLine("5. Exit");
+            cb();
+            
+            listMenu.ForEach(menu => Console.WriteLine($"{menu.Item1}. {menu.Item2}"));
 
             try
             {
-                var inputMenu = Console.ReadLine();
+                Console.Write("\n[.] Select Menu : ");
+                var inputMenu = Convert.ToInt32(Console.ReadLine());
 
-                var input = Convert.ToInt32(inputMenu);
+                Console.Clear();
+                var selected = listMenu.First(tuple => tuple.Item1 == inputMenu);
+                if (selected.Item2.Equals("Exit") || selected.Item2.Equals("Back")) return;
 
-                switch (input)
-                {
-                    case 1:
-                        Console.Clear();
-                        CreateUser();
-                        break;
-                    case 2:
-                        Console.Clear();
-                        ShowUsers();
-                        break;
-                    case 3:
-                        Console.Clear();
-                        SearchUser();
-                        break;
-                    case 4:
-                        Console.Clear();
-                        LoginUser();
-                        break;
-                    case 5:
-                        return;
-                    default:
-                        Console.WriteLine("invalid menu.");
-                        break;
-                }
+                selected.Item3();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine("invalid menu.");
+                Console.Clear();
+                Console.WriteLine("[!] Invalid menu.\n");
             }
         }
+
+    }
+
+    public static void Start()
+    {
+        Console.Clear();
+        MenuHandler(new List<(int, string, Action)>
+        {
+            (1, "Create User", CreateUser),
+            (2, "Show Users", ShowUsers),
+            (3, "Search User", SearchUser),
+            (4, "Login User", LoginUser),
+            (5, "Exit", () => { }),
+        }, () =>
+        {
+            Console.WriteLine("== BASIC AUTHENTICATION ==");
+        });
     }
 }
 
