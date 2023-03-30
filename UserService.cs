@@ -34,7 +34,7 @@ public class UserService
     {
         var foundUsers = UserRepository.FindManyByFullname(name);
 
-        if (foundUsers.Count < 1) throw new Exception("user not found");
+        if (foundUsers.Count < 1) throw new Exception("[!] User not found");
 
         return foundUsers;
     }
@@ -61,11 +61,11 @@ public class UserService
         {
             foundUser = UserRepository.FindOneByUsername(username);
 
-            if (password != foundUser.Password) throw new Exception("incorrect password.");
+            if (password != foundUser.Password) throw new Exception("[!] Incorrect password.");
         }
         catch (KeyNotFoundException)
         {
-            throw new Exception($"username {username} does not exist.");
+            throw new Exception($"[!] Username {username} does not exist.");
         }
 
         return foundUser;
@@ -75,7 +75,7 @@ public class UserService
     {
         var foundUsers = UserRepository.List();
 
-        if (foundUsers.Count < 1) throw new Exception("no user");
+        if (foundUsers.Count < 1) throw new Exception("[!] No user.");
 
         return foundUsers;
     }
