@@ -130,35 +130,6 @@ public class CLIProgram
             }
     }
     
-    // Display random jokes from API call
-    private static void DisplayJokes()
-    {
-        Console.Clear();
-        try
-        {
-            Console.WriteLine("Wait for it..");
-            HttpResponseMessage response = new HttpClient().GetAsync("https://official-joke-api.appspot.com/jokes/random").Result;
-
-            var body = response.Content.ReadAsStringAsync().Result;
-
-            var jsonBody = JsonNode.Parse(body);
-
-            Console.WriteLine($"[?] {jsonBody["setup"]}");
-
-            Console.WriteLine("\n↵ for punchline");
-            Console.ReadLine();
-
-            Console.WriteLine($"[✓] {jsonBody["punchline"]} XD");
-
-            Console.ReadLine();
-            Console.Clear();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("[!] Sorry cant make a joke right now");
-        }
-    }
-
     private static void LoginUser()
     {
         while (true)
@@ -174,13 +145,7 @@ public class CLIProgram
                 Console.Clear();
                 Console.WriteLine("[✓] Login success.");
                 Console.WriteLine($"Welcome {loggedInUser.FirstName}, hope you doing well!");
-                Thread.Sleep(1000);
-                Console.WriteLine(".\n.\n.");
-                MenuHandler(new List<(int, string, Action)>
-                {
-                    (1, "Alright!", DisplayJokes),
-                    (2, "Nope", () => { })
-                }, () => { Console.WriteLine($"[?] Hey {loggedInUser.FirstName}, do you wanna hear some jokes?"); });
+                Console.ReadLine();
                 return;
             }
             catch (Exception e)
